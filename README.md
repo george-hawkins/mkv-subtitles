@@ -95,7 +95,7 @@ $ vobsubocr -l eng -c tessedit_char_blacklist='|\/`_~' -o paprika_en.srt paprika
 
 Note: the `tessedit_char_blacklist`, this is a list of blacklisted characters that are unlikely to validly occur in the subtitles and without it, Tesseract sometimes e.g. interpreted `I` as `|`.
 
-Even with this blacklist, it often mixed up `!` and `I`. The `!` appears in lots of places validly but I would have hoped given that Tesseract has to be told what language is being converted that it would e.g "know" that `!` generally only appears in very particular situations and definitely not at the start of sentences. I manually, cleaned up all the `!` issues (oddly, it never seemed to mistake an `!` for an `I` - it was always only the other way around).
+Even with this blacklist, it often mixed up `!` and `I`. The `!` appears in lots of places validly but I would have hoped given that Tesseract has to be told what language is being converted that it would e.g "know" that `!` generally only appears in very particular situations and definitely not at the start of sentences. I manually, cleaned up all the `!` issues (oddly, it never seemed to mistake an `!` for an `I` - it was always only the other way around). And `1` and `I` are also frequently confused.
 
 This is surprisingly quick - clearly OCRing isn't a taxing job for modern computers.
 
