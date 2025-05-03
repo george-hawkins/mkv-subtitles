@@ -95,7 +95,14 @@ $ vobsubocr -l eng -c tessedit_char_blacklist='|\/`_~' -o paprika_en.srt paprika
 
 Note: the `tessedit_char_blacklist`, this is a list of blacklisted characters that are unlikely to validly occur in the subtitles and without it, Tesseract sometimes e.g. interpreted `I` as `|`.
 
-Even with this blacklist, it often mixed up `!` and `I`. The `!` appears in lots of places validly but I would have hoped given that Tesseract has to be told what language is being converted that it would e.g "know" that `!` generally only appears in very particular situations and definitely not at the start of sentences. I manually, cleaned up all the `!` issues (oddly, it never seemed to mistake an `!` for an `I` - it was always only the other way around). And `1` and `I` are also frequently confused.
+Even with this blacklist, it often mixed up `!` and `I`. The `!` appears in lots of places validly but I would have hoped given that Tesseract has to be told what language is being converted that it would e.g "know" that `!` generally only appears in very particular situations and definitely not at the start of sentences. I manually, cleaned up all the `!` issues (oddly, it never seemed to mistake an `!` for an `I` - it was always only the other way around).
+
+Commont mistakes were:
+
+* `!` instead of `I`.
+* `1` instead of `I`.
+* `lam` instead of `I am`.
+* Oddly, two instances of `K` rather than `k` (both in the work `Know`) - all other capitalization seemed fine.
 
 This is surprisingly quick - clearly OCRing isn't a taxing job for modern computers.
 
@@ -109,7 +116,7 @@ There were three main patterns to look for and remove:
 * `[crowd gasping]`
 * `[Paprika] There's someone who keeps`
 
-Note: in all case, I never deleted a line, I just deleted character, sometimes leaving completely blank lines - whether this is the correct approach, I don't know - but I didn't want to change the structure of the file.
+Note: in all case, I never deleted a line (except see blank-line issue below), I just deleted character, sometimes leaving completely blank lines - whether this is the correct approach, I don't know - but I didn't want to change the structure of the file.
 
 Things like `[in English] ...` tell you that the character is actually speaking English (even though in this case, it's a Japanese movie), so these lines can be removed completely (I just did a case-insensitive search for "english" and removed these few lines - well not removed entirely - as noted, I just removed the characters on the relevant lines).
 
@@ -128,5 +135,31 @@ And then for everything else, I did:
 ```
 :%s/\[.*\]\s*/
 ```
+
+Creating blank lines did cause a problem, e.g.:
+
+```
+952
+01:23:06,690 --> 01:23:09,210
+[Konakawa]
+Have we awoken from the dream?
+```
+
+Became: 
+
+```
+952
+01:23:06,690 --> 01:23:09,210
+
+Have we awoken from the dream?
+```
+
+And the `Have ...` is treated as a misformatted start of a new block and ignored.
+
+So, I searched for timecodes followed by an empty line followed by at least one character of text like so:
+
+`/^[0-9]\+.*\n\s*$\n.`
+
+And properly deleted those cases.
 
 That's it.
